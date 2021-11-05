@@ -23,7 +23,7 @@ class ViewModel: ObservableObject {
         let newDog = Dog(context: context)
         newDog.name = name
         newDog.breed = breed
-        saveDogs() // seems very inefficient to save ALL the dogs
+        saveDogs()
     }
     
     func deleteDog(indexSet: IndexSet) {
@@ -47,7 +47,9 @@ class ViewModel: ObservableObject {
     func saveDogs() {
         do {
             try context.save()
-            fetchDogs() // seems very inefficient to fetch ALL the dogs again
+            // It seems very inefficient to fetch ALL the dogs again
+            // every time one is added, deleted, or updated!
+            fetchDogs()
         } catch {
             print("saveDogs error:", error)
         }
