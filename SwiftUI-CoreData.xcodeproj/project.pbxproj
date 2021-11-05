@@ -13,6 +13,8 @@
 		4D686EF42735722F001C2C4E /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4D686EF32735722F001C2C4E /* Preview Assets.xcassets */; };
 		4D686EFD273572FE001C2C4E /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D686EFC273572FE001C2C4E /* ViewModel.swift */; };
 		4D686F01273574D8001C2C4E /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4D686EFF273574D8001C2C4E /* Model.xcdatamodeld */; };
+		4D686F042735C933001C2C4E /* DogsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D686F032735C896001C2C4E /* DogsView.swift */; };
+		4D686F052735C935001C2C4E /* PeopleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D686F022735C88C001C2C4E /* PeopleView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +26,8 @@
 		4D686EFC273572FE001C2C4E /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 		4D686EFE27357469001C2C4E /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		4D686F00273574D8001C2C4E /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
+		4D686F022735C88C001C2C4E /* PeopleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleView.swift; sourceTree = "<group>"; };
+		4D686F032735C896001C2C4E /* DogsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DogsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +63,8 @@
 			children = (
 				4D686EEE2735722D001C2C4E /* ContentView.swift */,
 				4D686EFF273574D8001C2C4E /* Model.xcdatamodeld */,
+				4D686F032735C896001C2C4E /* DogsView.swift */,
+				4D686F022735C88C001C2C4E /* PeopleView.swift */,
 				4D686EEC2735722D001C2C4E /* SwiftUI_CoreDataApp.swift */,
 				4D686EFC273572FE001C2C4E /* ViewModel.swift */,
 				4D686EF02735722F001C2C4E /* Assets.xcassets */,
@@ -148,6 +154,8 @@
 				4D686EEF2735722D001C2C4E /* ContentView.swift in Sources */,
 				4D686EFD273572FE001C2C4E /* ViewModel.swift in Sources */,
 				4D686EED2735722D001C2C4E /* SwiftUI_CoreDataApp.swift in Sources */,
+				4D686F042735C933001C2C4E /* DogsView.swift in Sources */,
+				4D686F052735C935001C2C4E /* PeopleView.swift in Sources */,
 				4D686F01273574D8001C2C4E /* Model.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

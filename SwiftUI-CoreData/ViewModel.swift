@@ -5,6 +5,7 @@ class ViewModel: ObservableObject {
     let container: NSPersistentContainer
     
     @Published var dogs: [Dog] = []
+    @Published var people: [Person] = []
     var context: NSManagedObjectContext { container.viewContext }
 
     init() {
@@ -15,6 +16,7 @@ class ViewModel: ObservableObject {
             } else {
                 print("loaded Core Data")
                 self.fetchDogs()
+                self.fetchPeople()
             }
         }
     }
@@ -26,10 +28,22 @@ class ViewModel: ObservableObject {
         saveDogs()
     }
     
+    func addPerson(name: String) {
+        let newPerson = Person(context: context)
+        newPerson.name = name
+        savePeople()
+    }
+    
     func deleteDog(indexSet: IndexSet) {
         guard let index = indexSet.first else { return }
         context.delete(dogs[index])
         saveDogs()
+    }
+    
+    func deletePerson(indexSet: IndexSet) {
+        guard let index = indexSet.first else { return }
+        context.delete(people[index])
+        savePeople()
     }
     
     func fetchDogs() {
@@ -44,12 +58,35 @@ class ViewModel: ObservableObject {
         }
     }
     
+    func fetchPeople() {
+        let request = NSFetchRequest<Person>(entityName: "Person")
+        request.sortDescriptors = [
+            NSSortDescriptor(key: "name", ascending: true)
+        ]
+        do {
+            people = try context.fetch(request)
+        } catch {
+            print("fetchPeople error:", error)
+        }
+    }
+    
     func saveDogs() {
         do {
             try context.save()
             // It seems very inefficient to fetch ALL the dogs again
             // every time one is added, deleted, or updated!
             fetchDogs()
+        } catch {
+            print("saveDogs error:", error)
+        }
+    }
+    
+    func savePeople() {
+        do {
+            try context.save()
+            // It seems very inefficient to fetch ALL the people again
+            // every time one is added, deleted, or updated!
+            fetchPeople()
         } catch {
             print("saveDogs error:", error)
         }

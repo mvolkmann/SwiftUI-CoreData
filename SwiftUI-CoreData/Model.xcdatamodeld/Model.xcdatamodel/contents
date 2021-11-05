@@ -4,7 +4,12 @@
         <attribute name="breed" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
     </entity>
+    <entity name="Person" representedClassName="Person" syncable="YES" codeGenerationType="class">
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="owns" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Dog"/>
+    </entity>
     <elements>
         <element name="Dog" positionX="-63" positionY="-18" width="128" height="59"/>
+        <element name="Person" positionX="-54" positionY="9" width="128" height="59"/>
     </elements>
 </model>
