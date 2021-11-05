@@ -2,8 +2,10 @@ import CoreData
 import Foundation
 
 class ViewModel: ObservableObject {
-    @Published var dogs: [Dog] = []
     let container: NSPersistentContainer
+    
+    @Published var dogs: [Dog] = []
+    var context: NSManagedObjectContext { container.viewContext }
 
     init() {
         container = NSPersistentContainer(name: "Model")
@@ -18,7 +20,7 @@ class ViewModel: ObservableObject {
     }
     
     func addDog(name: String, breed: String) {
-        let newDog = Dog(context: container.viewContext)
+        let newDog = Dog(context: context)
         newDog.name = name
         newDog.breed = breed
         saveDogs() // seems very inefficient to save ALL the dogs
@@ -26,7 +28,7 @@ class ViewModel: ObservableObject {
     
     func deleteDog(indexSet: IndexSet) {
         guard let index = indexSet.first else { return }
-        container.viewContext.delete(dogs[index])
+        context.delete(dogs[index])
         saveDogs()
     }
     
@@ -36,7 +38,7 @@ class ViewModel: ObservableObject {
             NSSortDescriptor(key: "name", ascending: true)
         ]
         do {
-            dogs = try container.viewContext.fetch(request)
+            dogs = try context.fetch(request)
         } catch {
             print("fetchDogs error:", error)
         }
@@ -44,7 +46,7 @@ class ViewModel: ObservableObject {
     
     func saveDogs() {
         do {
-            try container.viewContext.save()
+            try context.save()
             fetchDogs() // seems very inefficient to fetch ALL the dogs again
         } catch {
             print("saveDogs error:", error)

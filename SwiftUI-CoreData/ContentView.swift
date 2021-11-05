@@ -31,7 +31,8 @@ struct ContentView: View {
                     .buttonStyle(.borderedProminent)
                     .disabled(name.isEmpty || breed.isEmpty)
                 }
-
+                .frame(maxWidth: .infinity, maxHeight: 150)
+                
                 // Is it required to use ForEach inside List
                 // in order to specify onDelete?
                 List {
@@ -51,8 +52,6 @@ struct ContentView: View {
                     .onDelete(perform: vm.deleteDog)
                 }
                 .listStyle(PlainListStyle())
-                
-                Spacer()
             }.navigationTitle("Dogs")
         }
     }
