@@ -3,10 +3,10 @@ import Foundation
 
 class ViewModel: ObservableObject {
     let container: NSPersistentContainer
-    
-    @Published var dogs: [Dog] = []
-    @Published var people: [Person] = []
     var context: NSManagedObjectContext { container.viewContext }
+    
+    @Published var dogs: [DogEntity] = []
+    @Published var people: [PersonEntity] = []
 
     init() {
         container = NSPersistentContainer(name: "Model")
@@ -22,32 +22,38 @@ class ViewModel: ObservableObject {
     }
     
     func addDog(name: String, breed: String) {
-        let newDog = Dog(context: context)
-        newDog.name = name
-        newDog.breed = breed
+        let dog = DogEntity(context: context)
+        dog.name = name
+        dog.breed = breed
         saveDogs()
+        dogs.append(dog)
+        dogs.sort { ($0.name ?? "") < ($1.name ?? "") }
     }
     
     func addPerson(name: String) {
-        let newPerson = Person(context: context)
-        newPerson.name = name
+        let person = PersonEntity(context: context)
+        person.name = name
         savePeople()
+        people.append(person)
+        people.sort { ($0.name ?? "") < ($1.name ?? "") }
     }
     
     func deleteDog(indexSet: IndexSet) {
         guard let index = indexSet.first else { return }
         context.delete(dogs[index])
         saveDogs()
+        dogs.remove(at: index)
     }
     
     func deletePerson(indexSet: IndexSet) {
         guard let index = indexSet.first else { return }
         context.delete(people[index])
         savePeople()
+        people.remove(at: index)
     }
     
     func fetchDogs() {
-        let request = NSFetchRequest<Dog>(entityName: "Dog")
+        let request = NSFetchRequest<DogEntity>(entityName: "DogEntity")
         request.sortDescriptors = [
             NSSortDescriptor(key: "name", ascending: true)
         ]
@@ -58,11 +64,18 @@ class ViewModel: ObservableObject {
         }
     }
     
-    func fetchPeople() {
-        let request = NSFetchRequest<Person>(entityName: "Person")
+    func fetchPeople(filter: String = "") {
+        print("fetchPeople: filter =", filter)
+        let request = NSFetchRequest<PersonEntity>(entityName: "PersonEntity")
         request.sortDescriptors = [
             NSSortDescriptor(key: "name", ascending: true)
         ]
+        
+        if !filter.isEmpty {
+            // Filter so only entities with a name beginning with "T" are fetched.
+            request.predicate = NSPredicate(format: "name contains %@", filter)
+        }
+        
         do {
             people = try context.fetch(request)
         } catch {
@@ -73,9 +86,6 @@ class ViewModel: ObservableObject {
     func saveDogs() {
         do {
             try context.save()
-            // It seems very inefficient to fetch ALL the dogs again
-            // every time one is added, deleted, or updated!
-            fetchDogs()
         } catch {
             print("saveDogs error:", error)
         }
@@ -84,11 +94,8 @@ class ViewModel: ObservableObject {
     func savePeople() {
         do {
             try context.save()
-            // It seems very inefficient to fetch ALL the people again
-            // every time one is added, deleted, or updated!
-            fetchPeople()
         } catch {
-            print("saveDogs error:", error)
+            print("savePeople error:", error)
         }
     }
 }

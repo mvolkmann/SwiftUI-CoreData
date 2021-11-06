@@ -3,8 +3,15 @@ import SwiftUI
 struct PeopleView: View {
     @StateObject var vm: ViewModel
     
-    @State var editingPerson: Person? = nil
+    @State var editingPerson: PersonEntity? = nil
     @State var name: String = ""
+    @State var nameFilter: String = ""
+    
+    /*
+    func deleteAll() {
+        PersonEntity.
+    }
+    */
     
     var body: some View {
         NavigationView {
@@ -12,6 +19,7 @@ struct PeopleView: View {
                 Form {
                     TextField("Person Name", text: $name)
                         .textFieldStyle(.roundedBorder)
+                        .disableAutocorrection(true)
 
                     Button(editingPerson == nil ? "Add" : "Update") {
                         if let person = editingPerson {
@@ -19,13 +27,25 @@ struct PeopleView: View {
                             vm.savePeople()
                             editingPerson = nil
                         } else {
-                            vm.addPerson(name: name)
+                            withAnimation {
+                                vm.addPerson(name: name)
+                            }
                         }
 
                         name = ""
                     }
                     .buttonStyle(.borderedProminent)
                     .disabled(name.isEmpty)
+                    
+                    TextField("Filter", text: $nameFilter)
+                        .textFieldStyle(.roundedBorder)
+                        .autocapitalization(.none)
+                        .disableAutocorrection(true)
+                        .onChange(of: nameFilter) {
+                            vm.fetchPeople(filter: $0)
+                        }
+                    
+                    //Button("Delete All") { deleteAll() }
                 }
                 .frame(maxWidth: .infinity, maxHeight: 150)
 
