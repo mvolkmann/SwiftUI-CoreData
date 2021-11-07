@@ -3,9 +3,9 @@ import SwiftUI
 struct PeopleView: View {
     @StateObject var vm: ViewModel
     
-    @State var editingPerson: PersonEntity? = nil
-    @State var name: String = ""
-    @State var nameFilter: String = ""
+    @State private var editingPerson: PersonEntity? = nil
+    @State private var name: String = ""
+    @State private var nameFilter: String = ""
     
     /*
     func deleteAll() {

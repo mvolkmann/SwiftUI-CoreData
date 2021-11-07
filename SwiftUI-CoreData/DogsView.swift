@@ -3,11 +3,14 @@ import SwiftUI
 struct DogsView: View {
     @StateObject var vm: ViewModel
 
-    @State var editingDog: DogEntity? = nil
-    @State var breed: String = ""
-    @State var name: String = ""
-    // @State var selectedPerson: PersonEntity? = nil
-    @State var selectedPersonName: String = ""
+    @State private var editingDog: DogEntity? = nil
+    @State private var breed: String = ""
+    @State private var name: String = ""
+    @State private var selectedPersonIndex: Int = -1
+
+    private var selectedPerson: PersonEntity? {
+        selectedPersonIndex == -1 ? nil : vm.people[selectedPersonIndex]
+    }
 
     /*
      func deleteMe() {
@@ -27,19 +30,19 @@ struct DogsView: View {
                     TextField("Dog Breed", text: $breed)
                         .textFieldStyle(.roundedBorder)
 
-                    // TODO: Allow an owner to be selected.
-                    Picker("Owner", selection: $selectedPersonName) {
-                        ForEach(vm.people) {
-                            Text($0.name ?? "").tag($0.name ?? "")
+                    Picker("Owner", selection: $selectedPersonIndex) {
+                        ForEach(vm.people.indices) { index in
+                            Text(vm.people[index].name ?? "").tag(index)
                         }
                     }
-                    //.pickerStyle(WheelPickerStyle())
-                    Text("You selected \(selectedPersonName)")
 
                     Button(editingDog == nil ? "Add" : "Update") {
                         if let dog = editingDog {
                             dog.name = name
                             dog.breed = breed
+                            if let owner = selectedPerson {
+                                dog.ownedBy = owner
+                            }
                             vm.saveDogs()
                             editingDog = nil
                         } else {
@@ -69,6 +72,9 @@ struct DogsView: View {
                                     editingDog = dog
                                     name = dog.name ?? ""
                                     breed = dog.breed ?? ""
+                                    selectedPersonIndex = vm.people.firstIndex(
+                                        where: { $0.name == dog.ownedBy?.name }
+                                    ) ?? -1
                                 }
                         }
                     }
