@@ -12,6 +12,12 @@ struct DogsView: View {
         selectedPersonIndex == -1 ? nil : vm.people[selectedPersonIndex]
     }
 
+    func clear() {
+        editingDog = nil
+        name = ""
+        breed = ""
+    }
+
     /*
      func deleteMe() {
          if let dog = editingDog {
@@ -19,6 +25,15 @@ struct DogsView: View {
          }
      }
      */
+
+    func edit(dog: DogEntity) {
+        editingDog = dog
+        name = dog.name ?? ""
+        breed = dog.breed ?? ""
+        selectedPersonIndex = vm.people.firstIndex(
+            where: { $0.name == dog.ownedBy?.name }
+        ) ?? -1
+    }
 
     var body: some View {
         NavigationView {
@@ -29,33 +44,36 @@ struct DogsView: View {
                         .disableAutocorrection(true)
                     TextField("Dog Breed", text: $breed)
                         .textFieldStyle(.roundedBorder)
-
                     Picker("Owner", selection: $selectedPersonIndex) {
                         ForEach(vm.people.indices) { index in
                             Text(vm.people[index].name ?? "").tag(index)
                         }
                     }
 
-                    Button(editingDog == nil ? "Add" : "Update") {
-                        if let dog = editingDog {
-                            dog.name = name
-                            dog.breed = breed
-                            if let owner = selectedPerson {
-                                dog.ownedBy = owner
+                    HStack {
+                        Button(editingDog == nil ? "Add" : "Update") {
+                            if let dog = editingDog {
+                                dog.name = name
+                                dog.breed = breed
+                                if let owner = selectedPerson {
+                                    dog.ownedBy = owner
+                                }
+                                vm.saveDogs()
+                            } else {
+                                withAnimation {
+                                    vm.addDog(name: name, breed: breed)
+                                }
                             }
-                            vm.saveDogs()
-                            editingDog = nil
-                        } else {
-                            withAnimation {
-                                vm.addDog(name: name, breed: breed)
-                            }
-                        }
 
-                        name = ""
-                        breed = ""
+                            clear()
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .disabled(name.isEmpty || breed.isEmpty)
+
+                        if editingDog != nil {
+                            Button("Cancel", action: clear)
+                        }
                     }
-                    .buttonStyle(.borderedProminent)
-                    .disabled(name.isEmpty || breed.isEmpty)
                 }
                 .frame(maxWidth: .infinity, maxHeight: 180)
 
@@ -65,17 +83,11 @@ struct DogsView: View {
                     ForEach(vm.dogs) { dog in
                         HStack {
                             Text(dog.name ?? "no name")
-                            Text(dog.breed ?? "no breed")
                             Spacer()
-                            Image(systemName: "pencil")
-                                .onTapGesture {
-                                    editingDog = dog
-                                    name = dog.name ?? ""
-                                    breed = dog.breed ?? ""
-                                    selectedPersonIndex = vm.people.firstIndex(
-                                        where: { $0.name == dog.ownedBy?.name }
-                                    ) ?? -1
-                                }
+                            Text(dog.breed ?? "no breed")
+                        }
+                        .onTapGesture {
+                            edit(dog: dog)
                         }
                     }
                     .onDelete(perform: vm.deleteDog)
