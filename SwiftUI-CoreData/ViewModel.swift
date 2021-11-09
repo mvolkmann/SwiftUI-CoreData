@@ -23,6 +23,7 @@ class ViewModel: ObservableObject {
     
     func addDog(name: String, breed: String, ownedBy: PersonEntity?) {
         let dog = DogEntity(context: context)
+        dog.id = UUID()
         dog.name = name
         dog.breed = breed
         dog.ownedBy = ownedBy
@@ -33,6 +34,7 @@ class ViewModel: ObservableObject {
     
     func addPerson(name: String) {
         let person = PersonEntity(context: context)
+        person.id = UUID()
         person.name = name
         savePeople()
         people.append(person)
@@ -73,13 +75,14 @@ class ViewModel: ObservableObject {
         ]
         
         if !filter.isEmpty {
-            print("skipping filter")
+            print("applying filter")
             //TODO: Why does this cause a fatal error now?  It worked earlier.
-            //request.predicate = NSPredicate(format: "name contains %@", filter)
+            request.predicate = NSPredicate(format: "name contains %@", filter)
         }
         
         do {
             people = try context.fetch(request)
+            print("fetchPeople: people =", people)
         } catch {
             print("fetchPeople error:", error)
         }

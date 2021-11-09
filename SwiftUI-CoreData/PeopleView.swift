@@ -21,7 +21,6 @@ struct PeopleView: View {
         // Get an array of dog names owned by the selected person.
         let owns = person.owns as? Set<DogEntity> ?? []
         dogNames = owns.map() { $0.name ?? "" }
-        print("edit: dogNames =", dogNames)
     }
     
     var body: some View {
@@ -71,7 +70,7 @@ struct PeopleView: View {
                 // Is it required to use ForEach inside List
                 // in order to specify onDelete?
                 List {
-                    ForEach(vm.people) { person in
+                    ForEach(vm.people, id: \.id) { person in
                         Text(person.name ?? "no name")
                             .onTapGesture {
                                 edit(person: person)

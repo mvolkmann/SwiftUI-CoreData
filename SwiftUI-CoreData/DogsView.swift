@@ -6,26 +6,28 @@ struct DogsView: View {
     @State private var editingDog: DogEntity? = nil
     @State private var breed: String = ""
     @State private var name: String = ""
-    @State private var selectedPersonIndex: Int = -1
+    @State private var selectedPersonId: UUID? = nil
 
     private var selectedPerson: PersonEntity? {
-        selectedPersonIndex == -1 ? nil : vm.people[selectedPersonIndex]
+        //selectedPersonIndex == -1 ? nil : vm.people[selectedPersonIndex]
+        vm.people.first(where: { $0.id == selectedPersonId})
     }
 
     func clear() {
         editingDog = nil
         name = ""
         breed = ""
-        selectedPersonIndex = -1
+        selectedPersonId = nil
     }
 
     func edit(dog: DogEntity) {
         editingDog = dog
         name = dog.name ?? ""
         breed = dog.breed ?? ""
-        selectedPersonIndex = vm.people.firstIndex(
+        let selectedPerson = vm.people.first(
             where: { $0.name == dog.ownedBy?.name }
-        ) ?? -1
+        )
+        selectedPersonId = selectedPerson?.id
     }
 
     var body: some View {
@@ -37,9 +39,9 @@ struct DogsView: View {
                         .disableAutocorrection(true)
                     TextField("Dog Breed", text: $breed)
                         .textFieldStyle(.roundedBorder)
-                    Picker("Owner", selection: $selectedPersonIndex) {
-                        ForEach(vm.people.indices) { index in
-                            Text(vm.people[index].name ?? "").tag(index)
+                    Picker("Owner", selection: $selectedPersonId) {
+                        ForEach(vm.people) { person in
+                            Text(person.name ?? "").tag(person.id)
                         }
                     }
 
@@ -77,7 +79,7 @@ struct DogsView: View {
                 // Is it required to use ForEach inside List
                 // in order to specify onDelete?
                 List {
-                    ForEach(vm.dogs) { dog in
+                    ForEach(vm.dogs, id: \.id) { dog in
                         HStack {
                             Text(dog.name ?? "no name")
                             Spacer()
