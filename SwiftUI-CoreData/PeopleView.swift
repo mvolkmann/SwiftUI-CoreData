@@ -3,15 +3,26 @@ import SwiftUI
 struct PeopleView: View {
     @StateObject var vm: ViewModel
     
+    @State private var dogNames: [String] = []
     @State private var editingPerson: PersonEntity? = nil
     @State private var name: String = ""
     @State private var nameFilter: String = ""
     
-    /*
-    func deleteAll() {
-        PersonEntity.
+    func clear() {
+        editingPerson = nil
+        name = ""
+        dogNames = []
     }
-    */
+    
+    func edit(person: PersonEntity) {
+        editingPerson = person
+        name = person.name ?? ""
+        
+        // Get an array of dog names owned by the selected person.
+        let owns = person.owns as? Set<DogEntity> ?? []
+        dogNames = owns.map() { $0.name ?? "" }
+        print("edit: dogNames =", dogNames)
+    }
     
     var body: some View {
         NavigationView {
@@ -21,21 +32,27 @@ struct PeopleView: View {
                         .textFieldStyle(.roundedBorder)
                         .disableAutocorrection(true)
 
-                    Button(editingPerson == nil ? "Add" : "Update") {
-                        if let person = editingPerson {
-                            person.name = name
-                            vm.savePeople()
-                            editingPerson = nil
-                        } else {
-                            withAnimation {
-                                vm.addPerson(name: name)
+                    HStack {
+                        Button(editingPerson == nil ? "Add" : "Update") {
+                            if let person = editingPerson {
+                                person.name = name
+                                vm.savePeople()
+                                editingPerson = nil
+                            } else {
+                                withAnimation {
+                                    vm.addPerson(name: name)
+                                }
                             }
-                        }
 
-                        name = ""
+                            clear()
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .disabled(name.isEmpty)
+
+                        if editingPerson != nil {
+                            Button("Cancel", action: clear)
+                        }
                     }
-                    .buttonStyle(.borderedProminent)
-                    .disabled(name.isEmpty)
                     
                     TextField("Filter", text: $nameFilter)
                         .textFieldStyle(.roundedBorder)
@@ -45,23 +62,20 @@ struct PeopleView: View {
                             vm.fetchPeople(filter: $0)
                         }
                     
-                    //Button("Delete All") { deleteAll() }
+                    if !dogNames.isEmpty {
+                        Text("owns \(dogNames.joined(separator: " & "))")
+                    }
                 }
-                .frame(maxWidth: .infinity, maxHeight: 150)
+                .frame(maxWidth: .infinity, maxHeight: 190)
 
                 // Is it required to use ForEach inside List
                 // in order to specify onDelete?
                 List {
                     ForEach(vm.people) { person in
-                        HStack {
-                            Text(person.name ?? "no name")
-                            Spacer()
-                            Image(systemName: "pencil")
-                                .onTapGesture {
-                                    editingPerson = person
-                                    name = person.name ?? ""
-                                }
-                        }
+                        Text(person.name ?? "no name")
+                            .onTapGesture {
+                                edit(person: person)
+                            }
                     }
                     .onDelete(perform: vm.deletePerson)
                 }

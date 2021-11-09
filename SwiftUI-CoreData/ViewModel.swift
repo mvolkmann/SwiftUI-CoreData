@@ -21,10 +21,11 @@ class ViewModel: ObservableObject {
         }
     }
     
-    func addDog(name: String, breed: String) {
+    func addDog(name: String, breed: String, ownedBy: PersonEntity?) {
         let dog = DogEntity(context: context)
         dog.name = name
         dog.breed = breed
+        dog.ownedBy = ownedBy
         saveDogs()
         dogs.append(dog)
         dogs.sort { ($0.name ?? "") < ($1.name ?? "") }
@@ -72,8 +73,9 @@ class ViewModel: ObservableObject {
         ]
         
         if !filter.isEmpty {
-            // Filter so only entities with a name beginning with "T" are fetched.
-            request.predicate = NSPredicate(format: "name contains %@", filter)
+            print("skipping filter")
+            //TODO: Why does this cause a fatal error now?  It worked earlier.
+            //request.predicate = NSPredicate(format: "name contains %@", filter)
         }
         
         do {

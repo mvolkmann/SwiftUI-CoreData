@@ -16,15 +16,8 @@ struct DogsView: View {
         editingDog = nil
         name = ""
         breed = ""
+        selectedPersonIndex = -1
     }
-
-    /*
-     func deleteMe() {
-         if let dog = editingDog {
-             dog.ownedBy.
-         }
-     }
-     */
 
     func edit(dog: DogEntity) {
         editingDog = dog
@@ -61,7 +54,11 @@ struct DogsView: View {
                                 vm.saveDogs()
                             } else {
                                 withAnimation {
-                                    vm.addDog(name: name, breed: breed)
+                                    vm.addDog(
+                                        name: name,
+                                        breed: breed,
+                                        ownedBy: selectedPerson
+                                    )
                                 }
                             }
 
